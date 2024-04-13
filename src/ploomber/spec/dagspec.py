@@ -393,13 +393,6 @@ class DAGSpec(MutableMapping):
                     )
                     tags = tags | tags_other
 
-                # relative paths here are relative to the file where they
-                # are declared
-                base_path = Path(self.data["meta"]["import_tasks_from"]).parent
-
-                for task in imported:
-                    add_base_path_to_source_if_relative(task, base_path=base_path)
-
                 self.data["tasks"].extend(imported)
 
             # check if there are any params declared in env, not used in
@@ -931,16 +924,6 @@ def normalize_task(task):
         return {"source": task}
     else:
         return task
-
-
-def add_base_path_to_source_if_relative(task, base_path):
-    path = Path(task["source"])
-    relative_source = not path.is_absolute()
-
-    # must be a relative source with a valid extension, otherwise, it can
-    # be a dotted path
-    if relative_source and path.suffix in set(suffix2taskclass):
-        task["source"] = str(Path(base_path, task["source"]).resolve())
 
 
 def _expand_upstream(upstream, task_names):
