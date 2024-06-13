@@ -227,11 +227,13 @@ class TaskGroup:
             _upstream = []
             if upstream:
                 for up in upstream:
-                    _upstream.append(Template(
-                        up,
-                        variable_start_string="[[",
-                        variable_end_string="]]",
-                    ).render(**params))
+                    _upstream.append(
+                        Template(
+                            up,
+                            variable_start_string="[[",
+                            variable_end_string="]]",
+                        ).render(**params)
+                    )
 
             t = task_class(
                 product=product, dag=dag, name=task_name, params=params, **kwargs
