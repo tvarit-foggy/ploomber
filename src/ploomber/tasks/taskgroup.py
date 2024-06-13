@@ -198,7 +198,7 @@ class TaskGroup:
 
             # no namer function, just add an index
             else:
-                task_name = name + str(index)
+                task_name = name
 
             if isinstance(product_primitive, str):
                 product_primitive_to_use = Template(product_primitive).render(
