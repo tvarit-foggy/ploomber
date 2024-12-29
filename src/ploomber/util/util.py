@@ -174,7 +174,6 @@ def signature_check(fn, params, task_name):
     }
 
     extra = params - set(parameters.keys()) if not kwargs else set()
-    missing = set(required) - params
 
     errors = []
 
@@ -182,22 +181,7 @@ def signature_check(fn, params, task_name):
         msg = f"Got unexpected arguments: {sorted(extra)}"
         errors.append(msg)
 
-    if missing:
-        msg = f"Missing arguments: {sorted(missing)}"
-        errors.append(msg)
-
-    if "upstream" in missing:
-        errors.append(
-            "Verify this task declared upstream depedencies or "
-            'remove the "upstream" argument from the function'
-        )
-
-    missing_except_upstream = sorted(missing - {"upstream"})
-
-    if missing_except_upstream:
-        errors.append(f'Pass {missing_except_upstream} in "params"')
-
-    if extra or missing:
+    if extra:
         msg = ". ".join(errors)
         # not all functions have __name__ (e.g. partials)
         fn_name = getattr(fn, "__name__", fn)
