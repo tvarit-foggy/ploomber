@@ -13,4 +13,8 @@ def getfile(fn):
     if hasattr(fn, "__wrapped__"):
         return getfile(fn.__wrapped__)
     else:
-        return inspect.getfile(fn)
+        # Handle Cython functions
+        if hasattr(fn, '__code__') and hasattr(fn.__code__, 'co_filename'):
+            return fn.__code__.co_filename
+        else:
+            return inspect.getfile(fn)

@@ -69,16 +69,26 @@ class CallableLoader:
             _, source = lazily_locate_dotted_path(self._primitive)
             return source
         else:
-            return inspect.getsource(self.load())
+            fn = self.load()
+            # Handle Cython functions
+            if hasattr(fn, '__code__') and hasattr(fn.__code__, 'co_filename'):
+                return ""
+            else:
+                return inspect.getsource(fn)
 
     def get_loc(self):
         if self._from_dotted_path:
             loc, _ = lazily_locate_dotted_path(self._primitive)
             return loc
         else:
-            path = getfile(self.load())
-            _, line = inspect.getsourcelines(self.load())
-            return "{}:{}".format(path, line)
+            fn = self.load()
+            path = getfile(fn)
+            # Handle Cython functions
+            if hasattr(fn, '__code__') and hasattr(fn.__code__, 'co_filename'):
+                return path
+            else:
+                _, line = inspect.getsourcelines(fn)
+                return "{}:{}".format(path, line)
 
     @property
     def from_dotted_path(self):
